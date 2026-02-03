@@ -32,7 +32,7 @@
 *   В случае отсутсвия config.json при запуске агента используется default config со всеми метриками
     Для клиента всегда используется default config, в случае отключения метрик будут отображены нулевые значения соответственно
 
-
+```text
 {
   "linux":{
   "collect_load": true,
@@ -48,7 +48,7 @@
   "collect_cpu": true
   }
 }
-
+```
 ### Архитектура
 - Пайплайн коллекторов
 - Потокобезопасный кольцевой буфер
@@ -60,21 +60,19 @@
 
 ## Структура проекта
 
-vsysmon/
-├── bin/ # собранные бинарники
-├── client/ # клиент gRPC
-├── collectors/ # коллекторы и пайплайн
-├── config/ # конфигурация
-├── model/ # структуры Sample / Snapshot
-├── proto/ # protobuf 
-├── report/ # агрегация и формирование snapshot,  grpc сервер
-├── ring/ # кольцевой буфер и последний snapshot
-├── terminal/ # терминальные рендереры
-├── ring/ # кольцевой буфер
-├── model/ # структуры Sample / Snapshot
-├── init.go # инициализация
-├── main.go # агент
-└── README.md
+vsysmon/  
+├── bin/        # собранные бинарники  
+├── client/     # клиент gRPC  
+├── collectors/ # коллекторы и пайплайн  
+├── config/     # конфигурация  
+├── model/      # структуры Sample / Snapshot  
+├── proto/      # protobuf  
+├── report/     # агрегация и формирование snapshot,  grpc сервер  
+├── ring/       # кольцевой буфер и последний snapshot  
+├── terminal/   # терминальные рендереры  
+├── init.go     # инициализация  
+├── main.go     # агент  
+└── README.md  
 
 ---
 
@@ -82,27 +80,32 @@ vsysmon/
 
 Агент
 
-$cd bin 
-$./vsysmon -v
+\$cd  bin  
+\$./vsysmon -v
 
 Опционально можно настраивать m, n и порт. А так же включать отображение метрик без использования клиента
-Usage of ./vsysmon:
-  -m int
-        aggregation window in seconds (1-60) (default 15)
-  -n int
-        report interval in seconds (1-60) (default 5)
-  -p int
-        TCP port to listen on (default 50051)
-  -v    verbose
 
+```text
+Usage of ./vsysmon:  
+  -m int  
+        aggregation window in seconds (1-60) (default 15)  
+  -n int  
+        report interval in seconds (1-60) (default 5)  
+  -p int  
+        TCP port to listen on (default 50051)  
+  -v    verbose  
+```
 
-Клиент 
-$cd bin 
-$./client
+Клиент  
 
-Usage of ./bin/client:
-  -p int
-        port (default 50051)
+\$cd bin  
+\$./client  
+
+```text
+Usage of ./bin/client:  
+  -p int  
+        port (default 50051)  
+```
 
 Для Windows c испоьзованием файлов с расширением .exe
 
@@ -110,6 +113,7 @@ Usage of ./bin/client:
 
 ## Пример отображения
 
+```text
 ======== SYSTEM SNAPSHOT ========
 
 LOAD AVERAGE
