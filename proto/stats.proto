@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package stats;
+option go_package = "/proto;proto";
+
+service StatsService {
+  rpc StreamStats(Empty) returns (stream Snapshot);
+}
+
+message Empty {}
+
+
+message ListenSocket {
+  string command = 1;
+  uint32 pid = 2;
+  string user = 3;
+  string protocol = 4;
+  uint32 port = 5;
+}
+
+message FSStat {
+  string filesystem = 1;
+  string mount_point = 2;
+  uint64 used_mb = 3;
+  double used_perc = 4;
+  uint64 used_inode = 5;
+  double inode_perc = 6;
+}
+
+
+message ProtoTalker {
+  string proto = 1;
+  uint64 bytes = 2;
+  double perc = 3;
+}
+
+message FlowTalker {
+  string src = 1;
+  string dst = 2;
+  string proto = 3;
+  uint64 bps = 4;
+}
+
+message Snapshot {
+  double load = 1;
+  double cpu_user = 2;
+  double cpu_sys = 3;
+  double cpu_idle = 4;
+
+  double disk_tps = 5;
+  double disk_kbs = 6;
+
+  map<string, int32> tcp_states = 7;
+
+  repeated FSStat fs = 8;
+
+  repeated ProtoTalker ProtoTop = 9;
+  repeated FlowTalker FlowTop = 10;
+  repeated ListenSocket Listen = 11;
+}
