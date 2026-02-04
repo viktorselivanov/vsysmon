@@ -24,6 +24,10 @@ jobs:
             ~/.cache/go-build
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
+      - name: Install golangci-lint
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          export PATH="$HOME/go/bin:$PATH"
       - name: Download dependencies
         run: go mod download
       - name: Download dependencies
