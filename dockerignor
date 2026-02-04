@@ -1,0 +1,12 @@
+bin/
+.git/
+.github/
+*.md
+*.yml
+*.yaml
+!docker-compose.yml
+coverage.out
+coverage.html
+*.test
+.vscode/
+.idea/

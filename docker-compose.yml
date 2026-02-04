@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  vsysmon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vsysmon-daemon
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./config.json:/etc/vsysmon/config.json:ro
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+      - /dev:/dev:ro
+    privileged: true  # Required for reading /proc and /sys from host
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge

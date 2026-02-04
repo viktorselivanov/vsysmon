@@ -1,15 +1,15 @@
 {
   "linux":{
-  "collect_load": true,
-  "collect_cpu": true,
-  "collect_disk": true,
-  "collect_fs": true,
-  "collect_tcp_states": true,
-  "collect_listen": true,
-  "collect_top_talkers": true
+  "CollectLoad": true,
+  "collectCpu": true,
+  "collectDisk": true,
+  "collectFs": true,
+  "collectTcpStates": true,
+  "collectListen": true,
+  "collectTopTalkers": true
   },
   "windows":{
-  "collect_load": true,
-  "collect_cpu": true
+  "CollectLoad": true,
+  "collectCpu": true
   }
 }

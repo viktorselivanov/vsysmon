@@ -60,18 +60,19 @@
 
 ## Структура проекта
 
-vsysmon/  
+vsysmon/
 ├── bin/        # собранные бинарники  
-├── client/     # клиент gRPC  
-├── collectors/ # коллекторы и пайплайн  
-├── config/     # конфигурация  
-├── model/      # структуры Sample / Snapshot  
-├── proto/      # protobuf  
-├── report/     # агрегация и формирование snapshot,  grpc сервер  
-├── ring/       # кольцевой буфер и последний snapshot  
-├── terminal/   # терминальные рендереры  
-├── init.go     # инициализация  
-├── main.go     # агент  
+├── cmd/ 
+    ├── client/     # клиент gRPC
+    └── agent/      # агент
+├── internal/ 
+    ├── collectors/ # коллекторы и пайплайн  
+    ├── config/     # конфигурация  
+    ├── model/      # структуры Sample / Snapshot   
+    ├── report/     # агрегация и формирование snapshot,  grpc сервер  
+    ├── ring/       # кольцевой буфер и последний snapshot  
+    └── terminal/   # терминальные рендереры  
+├── proto/      # protobuf 
 └── README.md  
 
 ---

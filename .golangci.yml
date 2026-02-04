@@ -1,0 +1,72 @@
+run:
+  timeout: 5m
+  tests: true
+
+issues:
+  exclude-dirs:
+    - bin
+    - vendor
+  exclude-files:
+    - ".*\\.pb\\.go$"
+    - ".*_grpc\\.pb\\.go$"
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+  gocyclo:
+    min-complexity: 15
+  misspell:
+    locale: US
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+      - name: var-naming
+        severity: warning
+      - name: package-comments
+        severity: warning
+  unused:
+    check-exported: true
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - revive
+    - gocritic
+    - gocyclo
+    - unconvert
+    - prealloc
+    - copyloopvar
+    - gosec
+    - goconst
+    - gofumpt
+
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gocyclo
+    - path: proto/
+      linters:
+        - all
+  max-issues-per-linter: 0
+  max-same-issues: 0

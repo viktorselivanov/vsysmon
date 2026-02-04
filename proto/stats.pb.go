@@ -63,7 +63,7 @@ type ListenSocket struct {
 	Pid           uint32                 `protobuf:"varint,2,opt,name=pid,proto3" json:"pid,omitempty"`
 	User          string                 `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
 	Protocol      string                 `protobuf:"bytes,4,opt,name=protocol,proto3" json:"protocol,omitempty"`
-	Port          uint32                 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
+	Port          uint64                 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -126,7 +126,7 @@ func (x *ListenSocket) GetProtocol() string {
 	return ""
 }
 
-func (x *ListenSocket) GetPort() uint32 {
+func (x *ListenSocket) GetPort() uint64 {
 	if x != nil {
 		return x.Port
 	}
@@ -353,8 +353,8 @@ type Snapshot struct {
 	CpuIdle       float64                `protobuf:"fixed64,4,opt,name=cpu_idle,json=cpuIdle,proto3" json:"cpu_idle,omitempty"`
 	DiskTps       float64                `protobuf:"fixed64,5,opt,name=disk_tps,json=diskTps,proto3" json:"disk_tps,omitempty"`
 	DiskKbs       float64                `protobuf:"fixed64,6,opt,name=disk_kbs,json=diskKbs,proto3" json:"disk_kbs,omitempty"`
-	TcpStates     map[string]int32       `protobuf:"bytes,7,rep,name=tcp_states,json=tcpStates,proto3" json:"tcp_states,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	Fs            []*FSStat              `protobuf:"bytes,8,rep,name=fs,proto3" json:"fs,omitempty"` // добавили файловые системы
+	TcpStates     map[string]int64       `protobuf:"bytes,7,rep,name=tcp_states,json=tcpStates,proto3" json:"tcp_states,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	Fs            []*FSStat              `protobuf:"bytes,8,rep,name=fs,proto3" json:"fs,omitempty"`
 	ProtoTop      []*ProtoTalker         `protobuf:"bytes,9,rep,name=ProtoTop,proto3" json:"ProtoTop,omitempty"`
 	FlowTop       []*FlowTalker          `protobuf:"bytes,10,rep,name=FlowTop,proto3" json:"FlowTop,omitempty"`
 	Listen        []*ListenSocket        `protobuf:"bytes,11,rep,name=Listen,proto3" json:"Listen,omitempty"`
@@ -434,7 +434,7 @@ func (x *Snapshot) GetDiskKbs() float64 {
 	return 0
 }
 
-func (x *Snapshot) GetTcpStates() map[string]int32 {
+func (x *Snapshot) GetTcpStates() map[string]int64 {
 	if x != nil {
 		return x.TcpStates
 	}
@@ -480,7 +480,7 @@ const file_proto_stats_proto_rawDesc = "" +
 	"\x03pid\x18\x02 \x01(\rR\x03pid\x12\x12\n" +
 	"\x04user\x18\x03 \x01(\tR\x04user\x12\x1a\n" +
 	"\bprotocol\x18\x04 \x01(\tR\bprotocol\x12\x12\n" +
-	"\x04port\x18\x05 \x01(\rR\x04port\"\xbd\x01\n" +
+	"\x04port\x18\x05 \x01(\x04R\x04port\"\xbd\x01\n" +
 	"\x06FSStat\x12\x1e\n" +
 	"\n" +
 	"filesystem\x18\x01 \x01(\tR\n" +
@@ -519,9 +519,9 @@ const file_proto_stats_proto_rawDesc = "" +
 	"\x06Listen\x18\v \x03(\v2\x13.stats.ListenSocketR\x06Listen\x1a<\n" +
 	"\x0eTcpStatesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x012>\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x012>\n" +
 	"\fStatsService\x12.\n" +
-	"\vStreamStats\x12\f.stats.Empty\x1a\x0f.stats.Snapshot0\x01B\x0eZ\f/proto;protob\x06proto3"
+	"\vStreamStats\x12\f.stats.Empty\x1a\x0f.stats.Snapshot0\x01B\x0fZ\rvsysmon/protob\x06proto3"
 
 var (
 	file_proto_stats_proto_rawDescOnce sync.Once

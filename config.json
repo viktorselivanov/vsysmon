@@ -1,0 +1,15 @@
+{
+  "linux":{
+  "CollectLoad": true,
+  "collectCpu": true,
+  "collectDisk": true,
+  "collectFs": true,
+  "collectTcpStates": true,
+  "collectListen": true,
+  "collectTopTalkers": true
+  },
+  "windows":{
+  "CollectLoad": true,
+  "collectCpu": true
+  }
+}
