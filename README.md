@@ -49,32 +49,37 @@
   }
 }
 ```
-### Архитектура
+### Особенности
+
 - Пайплайн коллекторов
 - Потокобезопасный кольцевой буфер
 - Терминальные рендереры (одна секция = один рендерер)
 - Юнит-тесты с моками `/proc`
 - Интеграционные тесты под Linux (`-tags=integration`)
+- Настроенный конвер gitlab actions
 
 ---
 
 ## Структура проекта
-
+```text
 vsysmon/
 ├── bin/        # собранные бинарники  
-├── cmd/ 
-    ├── client/     # клиент gRPC
-    └── agent/      # агент
-├── internal/ 
+├── cmd/  
+    ├── client/     # клиент gRPC  
+    └── agent/      # агент  
+├── internal/  
     ├── collectors/ # коллекторы и пайплайн  
     ├── config/     # конфигурация  
     ├── model/      # структуры Sample / Snapshot   
     ├── report/     # агрегация и формирование snapshot,  grpc сервер  
     ├── ring/       # кольцевой буфер и последний snapshot  
     └── terminal/   # терминальные рендереры  
-├── proto/      # protobuf 
+├── docker-compose.yml  
+├── dockerfile  
+├── makefile  
+├── vsysmon.service  # настройка сервиса  
 └── README.md  
-
+```
 ---
 
 ## Запуск

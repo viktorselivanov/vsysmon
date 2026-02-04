@@ -30,8 +30,6 @@ jobs:
           export PATH="$HOME/go/bin:$PATH"
       - name: Download dependencies
         run: go mod download
-      - name: Download dependencies
-        run: go mod download
       - name: Lint
         run: make lint
       - name: Vet
