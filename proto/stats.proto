@@ -3,8 +3,13 @@ syntax = "proto3";
 package stats;
 option go_package = "vsysmon/proto";
 
+message StreamRequest {
+  uint64 n = 1;
+  uint64 m = 2;
+}
+
 service StatsService {
-  rpc StreamStats(Empty) returns (stream Snapshot);
+  rpc StreamStats(StreamRequest) returns (stream Snapshot);
 }
 
 message Empty {}
@@ -57,4 +62,7 @@ message Snapshot {
   repeated ProtoTalker ProtoTop = 9;
   repeated FlowTalker FlowTop = 10;
   repeated ListenSocket Listen = 11;
+
+
+
 }

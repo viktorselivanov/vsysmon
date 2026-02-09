@@ -1,8 +1,6 @@
 package report
 
 import (
-	"sort"
-	"strings"
 	"time"
 	"vsysmon/internal/config"
 	"vsysmon/internal/model"
@@ -11,117 +9,31 @@ import (
 	pb "vsysmon/proto"
 )
 
-func Reporter(cfg config.Config, verbose bool, n int) {
-	t := time.NewTicker(time.Duration(n) * time.Second) // таймер, тикер срабатывает раз в n секунд
-	for range t.C {
-		samples := ring.Snapshot() // возвращает копию всех накопленных Sample, если пусто пропускаем
-		if len(samples) == 0 {
-			continue
-		}
-
-		snap := aggregate(samples) // аггрегируем, формируем снепшот
-		ring.SaveSnapshot(&snap)   // безопасное сохранение
-		if verbose {               // включаем запись в консоль мониторинга на стороне сервера только при отладке с флагом -v
-			// используем единый вывод с клиентом и при этом можем выключать вывод отдельных функций в терминал
-			terminal.Render(&snap, terminal.BuildSections(cfg))
-			// отправляем снепшот для обработки, так же формируем пайплайн через cfg для включения/выключения функций
-		}
-		lastSnap := ring.LastSnapshot()
-		grpcOut <- snapshotToProto(&lastSnap) // безопасное сохранение
-	}
-}
-
-// aggregate усредняет данные за последние M секунд.
-func aggregate(samples []model.Sample) model.Snapshot {
-	var s model.Snapshot
-	s.TCPStates = make(map[string]int)
-
-	protoMap := make(map[string]uint64) // суммируем по протоколам
-	flowMap := make(map[string]uint64)  // суммируем по flow "src->dst|proto"
-
-	for i := range samples {
-		x := &samples[i]
-		s.Load += x.Load
-		s.CPUUser += x.CPUUser
-		s.CPUSys += x.CPUSys
-		s.CPUIdle += x.CPUIdle
-		s.DiskTPS += x.DiskTPS
-		s.DiskKBs += x.DiskKBs
-
-		for k, v := range x.TCPStates {
-			s.TCPStates[k] += v
-		}
-		// объединяем FS, оставляем последние значения
-		s.FS = x.FS
-
-		// ProtoTop суммируем
-		for _, p := range x.ProtoTop {
-			protoMap[p.Proto] += p.Bytes
-		}
-
-		// FlowTop суммируем и формируем будущий вид
-		for _, f := range x.FlowTop {
-			key := f.Src + "->" + f.Dst + "|" + f.Proto
-			flowMap[key] += f.BPS
-		}
+func Reporter(cfg config.Config, verbose bool, n, m int, in <-chan *model.Sample) {
+	if !verbose {
+		return
 	}
 
-	// усреднение
-	n := float64(len(samples))
-	s.Load /= n
-	s.CPUUser /= n
-	s.CPUSys /= n
-	s.CPUIdle /= n
-	s.DiskTPS /= n
-	s.DiskKBs /= n
+	ticker := time.NewTicker(time.Duration(n) * time.Second)
+	defer ticker.Stop()
 
-	// формируем ProtoTop с процентами
+	agg := ring.NewAggregator(m)
 
-	totalBytes := uint64(0)
-	for _, v := range protoMap {
-		totalBytes += v
-	}
+	for {
+		select {
+		case sample := <-in:
+			if sample == nil {
+				continue
+			}
+			agg.Push(sample) // кладём сэмпл в агрегатор
 
-	for proto, b := range protoMap {
-		perc := 0.0
-		if totalBytes > 0 {
-			perc = float64(b) / float64(totalBytes) * 100
+		case <-ticker.C:
+			snap := agg.Aggregate()
+			if snap != nil {
+				terminal.Render(snap, terminal.BuildSections(cfg))
+			}
 		}
-		s.ProtoTop = append(s.ProtoTop, model.ProtoTalker{
-			Proto: proto,
-			Bytes: b,
-			Perc:  perc,
-		})
 	}
-
-	sort.Slice(s.ProtoTop, func(i, j int) bool {
-		return s.ProtoTop[i].Perc > s.ProtoTop[j].Perc // по убыванию %
-	})
-
-	// формируем FlowTop
-	for k, b := range flowMap {
-		parts := strings.Split(k, "|")
-		addr := strings.Split(parts[0], "->")
-		s.FlowTop = append(s.FlowTop, model.FlowTalker{
-			Src:   addr[0],
-			Dst:   addr[1],
-			Proto: parts[1],
-			BPS:   b,
-		})
-	}
-
-	sort.Slice(s.FlowTop, func(i, j int) bool {
-		return s.FlowTop[i].BPS > s.FlowTop[j].BPS // по убыванию BPS
-	})
-
-	if len(s.FlowTop) > 10 {
-		s.FlowTop = s.FlowTop[:10] // ограничение на вывод не более 10ти
-	}
-
-	last := samples[len(samples)-1]
-	s.Listen = last.Listen // берём только из последнего (так как не часто изменяется информация)
-
-	return s
 }
 
 // snapshotToProto преобразует Snapshot в protobuf объект.

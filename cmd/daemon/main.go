@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"vsysmon/internal/collectors"
+	"vsysmon/internal/model"
 	"vsysmon/internal/report"
-	"vsysmon/internal/ring"
 )
 
 var (
@@ -24,17 +24,17 @@ func main() {
 
 	cfg := loadConf(*cpath) // загрузка конфига
 
-	ring.Init(*M) // инициализация кольцевого буффера
-
-	go report.StartGRPC(*port) // старт GRPC сервера
-
 	done := make(chan struct{}) // создаём небуферизированный канал
+
+	aggChan := make(chan *model.Sample)
 
 	pipeline := collectors.BuildPipeline(cfg) // сборка пайплайна (используется для включения/выключения функций)
 
-	collectors.StartCollector(done, pipeline) // запуск коллектора
+	collectors.StartCollector(done, pipeline, aggChan) // запуск коллектора
 
-	go report.Reporter(cfg, *verbose, *N) // выдача информации
+	go report.StartGRPC(*port, aggChan) // старт GRPC сервера
+
+	go report.Reporter(cfg, *verbose, *N, *M, aggChan) // выдача информации
 
 	select {} // бесконечный цикл
 }

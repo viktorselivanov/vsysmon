@@ -5,6 +5,9 @@ import (
 	"log"
 	"net"
 	"sync"
+	"time"
+	"vsysmon/internal/model"
+	"vsysmon/internal/ring"
 
 	pb "vsysmon/proto"
 
@@ -13,13 +16,18 @@ import (
 
 type grpcServer struct {
 	pb.UnimplementedStatsServiceServer
-	mu      sync.Mutex                                     // защищает доступ
-	clients map[pb.StatsService_StreamStatsServer]struct{} // активные подписчики
+	mu      sync.Mutex                                    // защищает доступ
+	clients map[pb.StatsService_StreamStatsServer]*client // активные подписчики
 }
 
-var grpcOut = make(chan *pb.Snapshot, 16) // буферизированный канал
+type client struct {
+	stream pb.StatsService_StreamStatsServer
+	agg    *ring.Aggregator
+	n      int // интервал отправки snapshot клиенту (секунды)
+	m      int // окно агрегации / сколько последних секунд усреднять
+}
 
-func StartGRPC(port int) {
+func StartGRPC(port int, in <-chan *model.Sample) {
 	sp := fmt.Sprintf(":%d", port)
 	lis, err := net.Listen("tcp", sp) // создаём TCP-листенер передаём сформированный порт без указания ip
 	if err != nil {
@@ -27,23 +35,68 @@ func StartGRPC(port int) {
 	}
 
 	s := &grpcServer{
-		clients: make(map[pb.StatsService_StreamStatsServer]struct{}), // создаём сервер и инициализируем мапу подписчиков
+		clients: make(map[pb.StatsService_StreamStatsServer]*client), // создаём сервер и инициализируем мапу подписчиков
 	}
 
 	g := grpc.NewServer()               // создаём gRPC-сервер
 	pb.RegisterStatsServiceServer(g, s) // регистрируем
 
-	go broadcaster(s) // броадкастер в отдельной го рутине
+	go broadcaster(in, s) // броадкастер в отдельной го рутине
 
 	if err := g.Serve(lis); err != nil { // запускаем gRPC,
 		fmt.Printf("grpc serve stopped: %v", err)
 	}
 }
 
-func (s *grpcServer) StreamStats(_ *pb.Empty, stream pb.StatsService_StreamStatsServer) error { // поток метрик
+func (s *grpcServer) StreamStats(req *pb.StreamRequest, stream pb.StatsService_StreamStatsServer) error { // поток метрик
+
+	n := int(req.N)
+	if req.N > uint64(^uint(0)>>1) { // максимум int на текущей платформе
+		n = int(^uint(0) >> 1)
+	}
+
+	m := int(req.M)
+	if req.M > uint64(^uint(0)>>1) {
+		m = int(^uint(0) >> 1)
+	}
+
+	c := &client{
+		stream: stream,
+		agg:    ring.NewAggregator(int(req.M)),
+		n:      n,
+		m:      m,
+	}
+
+	// дефолты
+	if c.n <= 0 {
+		c.n = 15
+	}
+	if c.m <= 0 {
+		c.m = 5
+	}
+
 	s.mu.Lock()
-	s.clients[stream] = struct{}{} //  не потокобезопасна по этому оборачивам в мьютекс
+	s.clients[stream] = c //  не потокобезопасна по этому оборачивам в мьютекс
 	s.mu.Unlock()
+
+	go func(c *client) {
+		ticker := time.NewTicker(time.Duration(c.n) * time.Second)
+		defer ticker.Stop()
+
+		for range ticker.C {
+
+			clientSnap := c.agg.Aggregate() // агрегируем по окну m
+			if clientSnap != nil {
+				if err := c.stream.Send(snapshotToProto(clientSnap)); err != nil {
+					// клиент отключился
+					s.mu.Lock()
+					delete(s.clients, c.stream)
+					s.mu.Unlock()
+					return
+				}
+			}
+		}
+	}(c)
 
 	<-stream.Context().Done() // ждём, пока клиент отключится
 
@@ -54,14 +107,11 @@ func (s *grpcServer) StreamStats(_ *pb.Empty, stream pb.StatsService_StreamStats
 	return nil
 }
 
-func broadcaster(s *grpcServer) { // рассылает snapshot всем подписчикам
-	for snap := range grpcOut {
+func broadcaster(samples <-chan *model.Sample, s *grpcServer) { // рассылает snapshot всем подписчикам
+	for sample := range samples {
 		s.mu.Lock()
-		for c := range s.clients {
-			if err := c.Send(snap); err != nil { // отправляем данные подписчику
-				// клиент отключился, удаляем из списка
-				delete(s.clients, c)
-			}
+		for _, c := range s.clients {
+			c.agg.Push(sample) // обновляем агрегатор клиента
 		}
 		s.mu.Unlock()
 	}

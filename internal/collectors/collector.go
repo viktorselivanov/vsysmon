@@ -4,7 +4,6 @@ import (
 	"time"
 
 	model "vsysmon/internal/model"
-	ring "vsysmon/internal/ring"
 )
 
 const (
@@ -106,7 +105,7 @@ func collectorTicker(done <-chan struct{}) In {
 }
 
 // StartCollector запускает весь пайплайн.
-func StartCollector(done <-chan struct{}, collectors []MetricCollector) {
+func StartCollector(done <-chan struct{}, collectors []MetricCollector, aggChan chan<- *model.Sample) {
 	stages := make([]Stage, 0, len(collectors))
 	for _, c := range collectors {
 		stages = append(stages, CollectorStage(c))
@@ -115,10 +114,10 @@ func StartCollector(done <-chan struct{}, collectors []MetricCollector) {
 	src := collectorTicker(done)
 	out := ExecutePipeline(src, done, stages...)
 
-	// читаем сэплы записываем в кольцевой буфер
+	// читаем сэмплы записываем в канал
 	go func() {
 		for s := range out {
-			ring.Push(s)
+			aggChan <- s
 		}
 	}()
 }

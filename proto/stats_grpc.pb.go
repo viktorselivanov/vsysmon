@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StatsServiceClient interface {
-	StreamStats(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Snapshot], error)
+	StreamStats(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Snapshot], error)
 }
 
 type statsServiceClient struct {
@@ -37,13 +37,13 @@ func NewStatsServiceClient(cc grpc.ClientConnInterface) StatsServiceClient {
 	return &statsServiceClient{cc}
 }
 
-func (c *statsServiceClient) StreamStats(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Snapshot], error) {
+func (c *statsServiceClient) StreamStats(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Snapshot], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &StatsService_ServiceDesc.Streams[0], StatsService_StreamStats_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[Empty, Snapshot]{ClientStream: stream}
+	x := &grpc.GenericClientStream[StreamRequest, Snapshot]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ type StatsService_StreamStatsClient = grpc.ServerStreamingClient[Snapshot]
 // All implementations must embed UnimplementedStatsServiceServer
 // for forward compatibility.
 type StatsServiceServer interface {
-	StreamStats(*Empty, grpc.ServerStreamingServer[Snapshot]) error
+	StreamStats(*StreamRequest, grpc.ServerStreamingServer[Snapshot]) error
 	mustEmbedUnimplementedStatsServiceServer()
 }
 
@@ -71,7 +71,7 @@ type StatsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedStatsServiceServer struct{}
 
-func (UnimplementedStatsServiceServer) StreamStats(*Empty, grpc.ServerStreamingServer[Snapshot]) error {
+func (UnimplementedStatsServiceServer) StreamStats(*StreamRequest, grpc.ServerStreamingServer[Snapshot]) error {
 	return status.Error(codes.Unimplemented, "method StreamStats not implemented")
 }
 func (UnimplementedStatsServiceServer) mustEmbedUnimplementedStatsServiceServer() {}
@@ -96,11 +96,11 @@ func RegisterStatsServiceServer(s grpc.ServiceRegistrar, srv StatsServiceServer)
 }
 
 func _StatsService_StreamStats_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Empty)
+	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(StatsServiceServer).StreamStats(m, &grpc.GenericServerStream[Empty, Snapshot]{ServerStream: stream})
+	return srv.(StatsServiceServer).StreamStats(m, &grpc.GenericServerStream[StreamRequest, Snapshot]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.

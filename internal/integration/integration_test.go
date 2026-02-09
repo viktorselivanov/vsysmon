@@ -1,7 +1,7 @@
 //go:build linux && integration
 // +build linux,integration
 
-package collectors_test
+package integration
 
 import (
 	"net"
@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"vsysmon/collectors"
-	"vsysmon/model"
+	"vsysmon/internal/collectors"
+	"vsysmon/internal/model"
 )
 
 func TestFullPipelineSnapshotFlow(t *testing.T) {

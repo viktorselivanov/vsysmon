@@ -21,6 +21,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type StreamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	N             uint64                 `protobuf:"varint,1,opt,name=n,proto3" json:"n,omitempty"`
+	M             uint64                 `protobuf:"varint,2,opt,name=m,proto3" json:"m,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamRequest) Reset() {
+	*x = StreamRequest{}
+	mi := &file_proto_stats_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamRequest) ProtoMessage() {}
+
+func (x *StreamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_stats_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
+func (*StreamRequest) Descriptor() ([]byte, []int) {
+	return file_proto_stats_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *StreamRequest) GetN() uint64 {
+	if x != nil {
+		return x.N
+	}
+	return 0
+}
+
+func (x *StreamRequest) GetM() uint64 {
+	if x != nil {
+		return x.M
+	}
+	return 0
+}
+
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -29,7 +81,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_proto_stats_proto_msgTypes[0]
+	mi := &file_proto_stats_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +93,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[0]
+	mi := &file_proto_stats_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +106,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{0}
+	return file_proto_stats_proto_rawDescGZIP(), []int{1}
 }
 
 type ListenSocket struct {
@@ -70,7 +122,7 @@ type ListenSocket struct {
 
 func (x *ListenSocket) Reset() {
 	*x = ListenSocket{}
-	mi := &file_proto_stats_proto_msgTypes[1]
+	mi := &file_proto_stats_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -82,7 +134,7 @@ func (x *ListenSocket) String() string {
 func (*ListenSocket) ProtoMessage() {}
 
 func (x *ListenSocket) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[1]
+	mi := &file_proto_stats_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -95,7 +147,7 @@ func (x *ListenSocket) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListenSocket.ProtoReflect.Descriptor instead.
 func (*ListenSocket) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{1}
+	return file_proto_stats_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListenSocket) GetCommand() string {
@@ -147,7 +199,7 @@ type FSStat struct {
 
 func (x *FSStat) Reset() {
 	*x = FSStat{}
-	mi := &file_proto_stats_proto_msgTypes[2]
+	mi := &file_proto_stats_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -159,7 +211,7 @@ func (x *FSStat) String() string {
 func (*FSStat) ProtoMessage() {}
 
 func (x *FSStat) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[2]
+	mi := &file_proto_stats_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -172,7 +224,7 @@ func (x *FSStat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FSStat.ProtoReflect.Descriptor instead.
 func (*FSStat) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{2}
+	return file_proto_stats_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *FSStat) GetFilesystem() string {
@@ -228,7 +280,7 @@ type ProtoTalker struct {
 
 func (x *ProtoTalker) Reset() {
 	*x = ProtoTalker{}
-	mi := &file_proto_stats_proto_msgTypes[3]
+	mi := &file_proto_stats_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -240,7 +292,7 @@ func (x *ProtoTalker) String() string {
 func (*ProtoTalker) ProtoMessage() {}
 
 func (x *ProtoTalker) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[3]
+	mi := &file_proto_stats_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -253,7 +305,7 @@ func (x *ProtoTalker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProtoTalker.ProtoReflect.Descriptor instead.
 func (*ProtoTalker) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{3}
+	return file_proto_stats_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProtoTalker) GetProto() string {
@@ -289,7 +341,7 @@ type FlowTalker struct {
 
 func (x *FlowTalker) Reset() {
 	*x = FlowTalker{}
-	mi := &file_proto_stats_proto_msgTypes[4]
+	mi := &file_proto_stats_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -301,7 +353,7 @@ func (x *FlowTalker) String() string {
 func (*FlowTalker) ProtoMessage() {}
 
 func (x *FlowTalker) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[4]
+	mi := &file_proto_stats_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -314,7 +366,7 @@ func (x *FlowTalker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FlowTalker.ProtoReflect.Descriptor instead.
 func (*FlowTalker) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{4}
+	return file_proto_stats_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *FlowTalker) GetSrc() string {
@@ -364,7 +416,7 @@ type Snapshot struct {
 
 func (x *Snapshot) Reset() {
 	*x = Snapshot{}
-	mi := &file_proto_stats_proto_msgTypes[5]
+	mi := &file_proto_stats_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -376,7 +428,7 @@ func (x *Snapshot) String() string {
 func (*Snapshot) ProtoMessage() {}
 
 func (x *Snapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_stats_proto_msgTypes[5]
+	mi := &file_proto_stats_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -389,7 +441,7 @@ func (x *Snapshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Snapshot.ProtoReflect.Descriptor instead.
 func (*Snapshot) Descriptor() ([]byte, []int) {
-	return file_proto_stats_proto_rawDescGZIP(), []int{5}
+	return file_proto_stats_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Snapshot) GetLoad() float64 {
@@ -473,7 +525,10 @@ var File_proto_stats_proto protoreflect.FileDescriptor
 
 const file_proto_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/stats.proto\x12\x05stats\"\a\n" +
+	"\x11proto/stats.proto\x12\x05stats\"+\n" +
+	"\rStreamRequest\x12\f\n" +
+	"\x01n\x18\x01 \x01(\x04R\x01n\x12\f\n" +
+	"\x01m\x18\x02 \x01(\x04R\x01m\"\a\n" +
 	"\x05Empty\"~\n" +
 	"\fListenSocket\x12\x18\n" +
 	"\acommand\x18\x01 \x01(\tR\acommand\x12\x10\n" +
@@ -519,9 +574,9 @@ const file_proto_stats_proto_rawDesc = "" +
 	"\x06Listen\x18\v \x03(\v2\x13.stats.ListenSocketR\x06Listen\x1a<\n" +
 	"\x0eTcpStatesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x012>\n" +
-	"\fStatsService\x12.\n" +
-	"\vStreamStats\x12\f.stats.Empty\x1a\x0f.stats.Snapshot0\x01B\x0fZ\rvsysmon/protob\x06proto3"
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x012F\n" +
+	"\fStatsService\x126\n" +
+	"\vStreamStats\x12\x14.stats.StreamRequest\x1a\x0f.stats.Snapshot0\x01B\x0fZ\rvsysmon/protob\x06proto3"
 
 var (
 	file_proto_stats_proto_rawDescOnce sync.Once
@@ -535,24 +590,25 @@ func file_proto_stats_proto_rawDescGZIP() []byte {
 	return file_proto_stats_proto_rawDescData
 }
 
-var file_proto_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_stats_proto_goTypes = []any{
-	(*Empty)(nil),        // 0: stats.Empty
-	(*ListenSocket)(nil), // 1: stats.ListenSocket
-	(*FSStat)(nil),       // 2: stats.FSStat
-	(*ProtoTalker)(nil),  // 3: stats.ProtoTalker
-	(*FlowTalker)(nil),   // 4: stats.FlowTalker
-	(*Snapshot)(nil),     // 5: stats.Snapshot
-	nil,                  // 6: stats.Snapshot.TcpStatesEntry
+	(*StreamRequest)(nil), // 0: stats.StreamRequest
+	(*Empty)(nil),         // 1: stats.Empty
+	(*ListenSocket)(nil),  // 2: stats.ListenSocket
+	(*FSStat)(nil),        // 3: stats.FSStat
+	(*ProtoTalker)(nil),   // 4: stats.ProtoTalker
+	(*FlowTalker)(nil),    // 5: stats.FlowTalker
+	(*Snapshot)(nil),      // 6: stats.Snapshot
+	nil,                   // 7: stats.Snapshot.TcpStatesEntry
 }
 var file_proto_stats_proto_depIdxs = []int32{
-	6, // 0: stats.Snapshot.tcp_states:type_name -> stats.Snapshot.TcpStatesEntry
-	2, // 1: stats.Snapshot.fs:type_name -> stats.FSStat
-	3, // 2: stats.Snapshot.ProtoTop:type_name -> stats.ProtoTalker
-	4, // 3: stats.Snapshot.FlowTop:type_name -> stats.FlowTalker
-	1, // 4: stats.Snapshot.Listen:type_name -> stats.ListenSocket
-	0, // 5: stats.StatsService.StreamStats:input_type -> stats.Empty
-	5, // 6: stats.StatsService.StreamStats:output_type -> stats.Snapshot
+	7, // 0: stats.Snapshot.tcp_states:type_name -> stats.Snapshot.TcpStatesEntry
+	3, // 1: stats.Snapshot.fs:type_name -> stats.FSStat
+	4, // 2: stats.Snapshot.ProtoTop:type_name -> stats.ProtoTalker
+	5, // 3: stats.Snapshot.FlowTop:type_name -> stats.FlowTalker
+	2, // 4: stats.Snapshot.Listen:type_name -> stats.ListenSocket
+	0, // 5: stats.StatsService.StreamStats:input_type -> stats.StreamRequest
+	6, // 6: stats.StatsService.StreamStats:output_type -> stats.Snapshot
 	6, // [6:7] is the sub-list for method output_type
 	5, // [5:6] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -571,7 +627,7 @@ func file_proto_stats_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_stats_proto_rawDesc), len(file_proto_stats_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

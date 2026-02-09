@@ -14,6 +14,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var n, m uint64
+
 func RunClient() error {
 	sp := fmt.Sprintf("localhost:%d", *port)
 
@@ -28,7 +30,25 @@ func RunClient() error {
 
 	client := pb.NewStatsServiceClient(conn) // создаём gRPC-клиент
 
-	stream, err := client.StreamStats(context.Background(), &pb.Empty{}) // получаем поток данных
+	if *N < 0 {
+		n = 0 // или дефолтное значение, например 15
+	} else {
+		n = uint64(*N)
+	}
+
+	if *M < 0 {
+		m = 0 // или дефолтное значение, например 5
+	} else {
+		m = uint64(*M)
+	}
+
+	stream, err := client.StreamStats(
+		context.Background(),
+		&pb.StreamRequest{
+			N: n,
+			M: m,
+		},
+	) // получаем поток данных
 	if err != nil {
 		return fmt.Errorf("failed to start stream: %w", err)
 	}
