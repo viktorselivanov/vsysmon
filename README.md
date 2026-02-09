@@ -73,7 +73,8 @@ vsysmon/
     ├── model/      # структуры Sample / Snapshot   
     ├── report/     # агрегация и формирование snapshot,  grpc сервер  
     ├── ring/       # кольцевой буфер и последний snapshot  
-    └── terminal/   # терминальные рендереры  
+    └── terminal/   # терминальные рендереры
+├── integration/    # интеграционные тесты
 ├── docker-compose.yml  
 ├── dockerfile  
 ├── makefile  
@@ -105,12 +106,16 @@ Usage of ./vsysmon:
 Клиент  
 
 \$cd bin  
-\$./client  
+\$./client  -n 5 -m 10 
 
 ```text
 Usage of ./bin/client:  
-  -p int  
-        port (default 50051)  
+  -m int
+        aggregation window in seconds (1-60) (default 15)
+  -n int
+        report interval in seconds (1-60) (default 5)
+  -p int
+        port (default 50051)
 ```
 
 Для Windows c испоьзованием файлов с расширением .exe
